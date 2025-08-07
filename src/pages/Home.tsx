@@ -114,7 +114,7 @@ const Home = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="glass-card p-8 hover-glow transition-gentle">
               <img 
-                src="/public/comicpages/coverpage.png" 
+                src="/comicpages/coverpage.png" 
                 alt="Golden Girl Comic Cover" 
                 className="w-full rounded-lg shadow-soft"
                 onError={(e) => {
