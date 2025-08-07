@@ -170,4 +170,34 @@
   .hover-glow:hover {
     box-shadow: var(--shadow-glow);
   }
+
+  /* Floating animations for the hero icons */
+  @keyframes float-1 {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-20px) rotate(5deg); }
+    66% { transform: translateY(-10px) rotate(-3deg); }
+  }
+
+  @keyframes float-2 {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(-5deg); }
+  }
+
+  @keyframes float-3 {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-10px) rotate(3deg); }
+    75% { transform: translateY(-25px) rotate(-2deg); }
+  }
+
+  .animate-float-1 {
+    animation: float-1 6s ease-in-out infinite;
+  }
+
+  .animate-float-2 {
+    animation: float-2 4s ease-in-out infinite;
+  }
+
+  .animate-float-3 {
+    animation: float-3 8s ease-in-out infinite;
+  }
 }

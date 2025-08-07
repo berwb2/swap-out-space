@@ -6,11 +6,8 @@ const Navigation = () => {
   
   const navItems = [
     { path: "/", label: "Home" },
-    { path: "/story", label: "Our Story" },
-    { path: "/gallery", label: "Gallery" },
-    { path: "/letters", label: "Letters" },
+    { path: "/tributes", label: "Tribute Wall" },
     { path: "/comic", label: "The Comic" },
-    { path: "/messages", label: "Messages" },
   ];
 
   return (

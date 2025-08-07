@@ -17,23 +17,57 @@ const Comic = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // In a real implementation, you would scan the public/comicpages directory
-    // For now, we'll create a list of expected pages
-    const expectedPages = [
-      'coverpage.png',
-      'chapter1.png',
-      'chapter2.png',
-      'chapter3.png'
-    ];
+    const loadComicPages = async () => {
+      try {
+        // Get list of files from the comicpages directory
+        const imageModules = import.meta.glob('/public/comicpages/*.png', { 
+          as: 'url',
+          eager: true 
+        });
+        
+        // Extract filenames and create page objects
+        const pages: ComicPage[] = Object.keys(imageModules)
+          .map(path => {
+            const filename = path.split('/').pop() || '';
+            return {
+              filename,
+              url: `/comicpages/${filename}`,
+              index: 0 // Will be set after sorting
+            };
+          })
+          .sort((a, b) => {
+            // Sort by filename (covers alphabetical and numerical order)
+            return a.filename.localeCompare(b.filename, undefined, {
+              numeric: true,
+              sensitivity: 'base'
+            });
+          })
+          .map((page, index) => ({ ...page, index }));
+        
+        setComicPages(pages);
+      } catch (error) {
+        console.error('Error loading comic pages:', error);
+        // Fallback to expected pages if dynamic loading fails
+        const fallbackPages = [
+          'coverpage.png',
+          'chapter1.png', 
+          'chapter2.png',
+          'finalchapter.png'
+        ];
+        
+        const pages: ComicPage[] = fallbackPages.map((filename, index) => ({
+          filename,
+          url: `/comicpages/${filename}`,
+          index
+        }));
+        
+        setComicPages(pages);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const pages: ComicPage[] = expectedPages.map((filename, index) => ({
-      filename,
-      url: `/comicpages/${filename}`,
-      index
-    }));
-
-    setComicPages(pages);
-    setIsLoading(false);
+    loadComicPages();
   }, []);
 
   const nextPage = () => {

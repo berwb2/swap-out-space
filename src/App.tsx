@@ -5,13 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import Story from "./pages/Story";
-import Gallery from "./pages/Gallery";
-import Letters from "./pages/Letters";
-import WriteLetter from "./pages/WriteLetter";
-import LetterDetail from "./pages/LetterDetail";
+import Tributes from "./pages/Tributes";
 import Comic from "./pages/Comic";
-import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,13 +20,8 @@ const App = () => (
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/story" element={<Story />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/letters" element={<Letters />} />
-            <Route path="/write-letter" element={<WriteLetter />} />
-            <Route path="/letters/:id" element={<LetterDetail />} />
+            <Route path="/tributes" element={<Tributes />} />
             <Route path="/comic" element={<Comic />} />
-            <Route path="/messages" element={<Messages />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
