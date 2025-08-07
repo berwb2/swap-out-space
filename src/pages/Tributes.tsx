@@ -247,18 +247,18 @@ const Tributes = () => {
         ) : posts.length > 0 ? (
           <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
             {posts.map((post) => (
-              <Card key={post.id} className="glass-card p-6 hover-glow transition-gentle break-inside-avoid mb-6">
+              <Card key={post.id} className="glass-card overflow-hidden hover-glow transition-gentle break-inside-avoid mb-6">
                 {post.image_url && (
-                  <div className="mb-4 -m-6 mb-6">
+                  <div className="w-full">
                     <img
                       src={post.image_url}
                       alt="Tribute photo"
-                      className="w-full h-auto object-cover rounded-t-lg"
+                      className="w-full h-auto object-cover"
                     />
                   </div>
                 )}
                 
-                <div className={post.image_url ? "px-6 pb-6" : ""}>
+                <div className="p-6">
                   <p className="text-foreground text-base leading-relaxed mb-4">
                     {post.content}
                   </p>
