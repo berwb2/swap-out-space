@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Gauta-Sunbeam Collection Design System
+   A warm, elegant tribute built with love
+   All colors MUST be HSL.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@layer base {
+  :root {
+    /* Core sunset palette inspired by the golden G logo */
+    --background: 45 100% 98%;
+    --foreground: 25 15% 15%;
+
+    --card: 42 95% 96%;
+    --card-foreground: 25 15% 20%;
+
+    --popover: 45 100% 98%;
+    --popover-foreground: 25 15% 15%;
+
+    /* Golden sunset primary */
+    --primary: 38 95% 55%;
+    --primary-foreground: 45 100% 98%;
+    --primary-glow: 40 100% 65%;
+
+    /* Warm dusty pink secondary */
+    --secondary: 340 35% 85%;
+    --secondary-foreground: 25 25% 25%;
+
+    /* Soft lavender muted tones */
+    --muted: 260 20% 92%;
+    --muted-foreground: 25 8% 45%;
+
+    /* Warm orange accent */
+    --accent: 25 85% 70%;
+    --accent-foreground: 45 100% 98%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 45 100% 98%;
+
+    --border: 40 25% 88%;
+    --input: 42 30% 93%;
+    --ring: 38 95% 55%;
+
+    --radius: 1rem;
+
+    /* Beautiful gradients for the sunset theme */
+    --gradient-sunset: linear-gradient(135deg, hsl(38 95% 55%), hsl(25 85% 70%));
+    --gradient-glow: linear-gradient(135deg, hsl(40 100% 65%), hsl(45 100% 75%));
+    --gradient-soft: linear-gradient(180deg, hsl(45 100% 98%), hsl(42 95% 96%));
+
+    /* Glass morphism shadows */
+    --shadow-glass: 0 8px 32px hsl(38 95% 55% / 0.15);
+    --shadow-glow: 0 0 40px hsl(40 100% 65% / 0.3);
+    --shadow-soft: 0 4px 16px hsl(25 15% 15% / 0.1);
+
+    /* Animation timings */
+    --transition-gentle: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --transition-fast: all 0.2s ease-out;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    @apply text-foreground;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-lg bg-card/60 border border-border/20;
+    box-shadow: var(--shadow-glass);
+  }
+
+  .gradient-sunset {
+    background: var(--gradient-sunset);
+  }
+
+  .gradient-glow {
+    background: var(--gradient-glow);
+  }
+
+  .transition-gentle {
+    transition: var(--transition-gentle);
+  }
+
+  .transition-fast {
+    transition: var(--transition-fast);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px hsl(var(--primary-glow) / 0.5);
+  }
+
+  .hover-scale {
+    @apply transition-fast hover:scale-105;
+  }
+
+  .hover-glow {
+    @apply transition-gentle;
+  }
+  
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+}
