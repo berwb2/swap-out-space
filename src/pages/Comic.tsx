@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, Grid, Book } from "lucide-react";
 
 interface ComicPage {
@@ -19,8 +18,8 @@ const Comic = () => {
   useEffect(() => {
     const loadComicPages = async () => {
       try {
-        // Get list of files from the comicpages directory
-        const imageModules = import.meta.glob('/public/comicpages/*.png', { 
+        // Fixed: Remove /public from the path
+        const imageModules = import.meta.glob('/comicpages/*.{png,jpg,jpeg}', { 
           as: 'url',
           eager: true 
         });
@@ -31,12 +30,11 @@ const Comic = () => {
             const filename = path.split('/').pop() || '';
             return {
               filename,
-              url: `/comicpages/${filename}`,
-              index: 0 // Will be set after sorting
+              url: imageModules[path],
+              index: 0
             };
           })
           .sort((a, b) => {
-            // Sort by filename (covers alphabetical and numerical order)
             return a.filename.localeCompare(b.filename, undefined, {
               numeric: true,
               sensitivity: 'base'
@@ -47,7 +45,7 @@ const Comic = () => {
         setComicPages(pages);
       } catch (error) {
         console.error('Error loading comic pages:', error);
-        // Fallback to expected pages if dynamic loading fails
+        // Fallback pages
         const fallbackPages = [
           'coverpage.png',
           'chapter1.png', 
@@ -70,40 +68,37 @@ const Comic = () => {
     loadComicPages();
   }, []);
 
-  const nextPage = () => {
-    if (currentPage < comicPages.length - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+  const nextPage = useCallback(() => {
+    setCurrentPage(prev => prev < comicPages.length - 1 ? prev + 1 : prev);
+  }, [comicPages.length]);
 
-  const prevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+  const prevPage = useCallback(() => {
+    setCurrentPage(prev => prev > 0 ? prev - 1 : prev);
+  }, []);
 
-  const handleKeyPress = (e: KeyboardEvent) => {
-    if (viewMode === 'reader') {
-      if (e.key === 'ArrowRight') nextPage();
-      if (e.key === 'ArrowLeft') prevPage();
-      if (e.key === 'Escape') setViewMode('grid');
-    }
-  };
-
+  // Fixed: Better event listener handling
   useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (viewMode === 'reader') {
+        if (e.key === 'ArrowRight') nextPage();
+        if (e.key === 'ArrowLeft') prevPage();
+        if (e.key === 'Escape') setViewMode('grid');
+      }
+    };
+
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [viewMode, currentPage]);
+  }, [viewMode, nextPage, prevPage]);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen py-12 px-6">
+      <div className="min-h-screen py-12 px-6 bg-gradient-to-br from-orange-50 to-yellow-50">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               The Comic: Golden Girl
             </h1>
-            <p className="text-xl text-muted-foreground">Loading pages...</p>
+            <p className="text-xl text-gray-600">Loading pages...</p>
           </div>
         </div>
       </div>
@@ -111,14 +106,14 @@ const Comic = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-12 px-6 bg-gradient-to-br from-orange-50 to-yellow-50">
       <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             The Comic: Golden Girl
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
             A visual celebration of friendship, adventure, and golden moments
           </p>
           
@@ -126,7 +121,7 @@ const Comic = () => {
             <Button
               variant={viewMode === 'grid' ? 'default' : 'outline'}
               onClick={() => setViewMode('grid')}
-              className="gradient-sunset hover-scale"
+              className="transform hover:scale-105 transition-transform duration-200"
             >
               <Grid className="w-4 h-4 mr-2" />
               Grid View
@@ -134,7 +129,7 @@ const Comic = () => {
             <Button
               variant={viewMode === 'reader' ? 'default' : 'outline'}
               onClick={() => setViewMode('reader')}
-              className="gradient-glow hover-scale"
+              className="transform hover:scale-105 transition-transform duration-200"
             >
               <Book className="w-4 h-4 mr-2" />
               Reader View
@@ -148,37 +143,38 @@ const Comic = () => {
             {comicPages.map((page, index) => (
               <Card
                 key={page.filename}
-                className="glass-card overflow-hidden hover-glow transition-gentle cursor-pointer group"
+                className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white/80 backdrop-blur-sm border-orange-200"
                 onClick={() => {
                   setCurrentPage(index);
                   setViewMode('reader');
                 }}
               >
-                <div className="aspect-[3/4] relative">
+                <div className="aspect-[3/4] relative overflow-hidden">
                   <img
                     src={page.url}
                     alt={`Comic page ${index + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-gentle"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
                       e.currentTarget.src = `data:image/svg+xml;base64,${btoa(`
                         <svg width="300" height="400" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect width="300" height="400" fill="hsl(42 95% 96%)"/>
-                          <text x="150" y="200" text-anchor="middle" fill="hsl(25 15% 15%)" font-family="Inter" font-size="16">
+                          <rect width="300" height="400" fill="#fef3c7"/>
+                          <rect x="50" y="150" width="200" height="100" rx="10" fill="#f59e0b" opacity="0.5"/>
+                          <text x="150" y="200" text-anchor="middle" fill="#92400e" font-family="Arial" font-size="16" font-weight="bold">
                             ${page.filename}
                           </text>
-                          <text x="150" y="220" text-anchor="middle" fill="hsl(25 8% 45%)" font-family="Inter" font-size="14">
+                          <text x="150" y="220" text-anchor="middle" fill="#b45309" font-family="Arial" font-size="14">
                             Page ${index + 1}
                           </text>
                         </svg>
                       `)}`;
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-gentle flex items-end justify-center pb-4">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
                     <span className="text-white font-medium">Page {index + 1}</span>
                   </div>
                 </div>
                 <div className="p-4 text-center">
-                  <h3 className="font-medium text-foreground">
+                  <h3 className="font-medium text-gray-900">
                     {page.filename.replace('.png', '').replace(/([A-Z])/g, ' $1').trim()}
                   </h3>
                 </div>
@@ -196,13 +192,13 @@ const Comic = () => {
                 variant="outline"
                 onClick={prevPage}
                 disabled={currentPage === 0}
-                className="hover-scale"
+                className="transform hover:scale-105 transition-transform duration-200"
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />
                 Previous
               </Button>
               
-              <span className="text-muted-foreground">
+              <span className="text-gray-600 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full">
                 Page {currentPage + 1} of {comicPages.length}
               </span>
               
@@ -210,7 +206,7 @@ const Comic = () => {
                 variant="outline"
                 onClick={nextPage}
                 disabled={currentPage === comicPages.length - 1}
-                className="hover-scale"
+                className="transform hover:scale-105 transition-transform duration-200"
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-2" />
@@ -223,15 +219,16 @@ const Comic = () => {
                 <img
                   src={comicPages[currentPage].url}
                   alt={`Comic page ${currentPage + 1}`}
-                  className="w-full h-auto rounded-lg shadow-soft"
+                  className="w-full h-auto rounded-lg shadow-lg"
                   onError={(e) => {
                     e.currentTarget.src = `data:image/svg+xml;base64,${btoa(`
                       <svg width="800" height="1000" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="800" height="1000" fill="hsl(42 95% 96%)"/>
-                        <text x="400" y="500" text-anchor="middle" fill="hsl(25 15% 15%)" font-family="Inter" font-size="24">
+                        <rect width="800" height="1000" fill="#fef3c7"/>
+                        <rect x="200" y="400" width="400" height="200" rx="20" fill="#f59e0b" opacity="0.5"/>
+                        <text x="400" y="500" text-anchor="middle" fill="#92400e" font-family="Arial" font-size="24" font-weight="bold">
                           ${comicPages[currentPage].filename}
                         </text>
-                        <text x="400" y="540" text-anchor="middle" fill="hsl(25 8% 45%)" font-family="Inter" font-size="18">
+                        <text x="400" y="540" text-anchor="middle" fill="#b45309" font-family="Arial" font-size="18">
                           Page ${currentPage + 1}
                         </text>
                       </svg>
@@ -242,15 +239,15 @@ const Comic = () => {
             </div>
 
             {/* Page Navigation Dots */}
-            <div className="flex justify-center gap-2">
+            <div className="flex justify-center gap-2 flex-wrap">
               {comicPages.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentPage(index)}
                   className={`w-3 h-3 rounded-full transition-all ${
                     index === currentPage
-                      ? 'bg-primary scale-125'
-                      : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                      ? 'bg-orange-500 scale-125'
+                      : 'bg-gray-300 hover:bg-gray-400'
                   }`}
                 />
               ))}
@@ -261,10 +258,10 @@ const Comic = () => {
         {/* Empty State */}
         {comicPages.length === 0 && (
           <div className="text-center py-20">
-            <h3 className="text-2xl font-bold text-foreground mb-4">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
               Comic Pages Coming Soon
             </h3>
-            <p className="text-muted-foreground">
+            <p className="text-gray-600">
               The beautiful story of Golden Girl is being crafted with love.
             </p>
           </div>
